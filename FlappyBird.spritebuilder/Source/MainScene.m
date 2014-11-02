@@ -192,14 +192,23 @@
         }
     }
     
+    _parallaxBackground.position = ccp(_parallaxBackground.position.x - (character.physicsBody.velocity.x * delta), _parallaxBackground.position.y);
+    
     //loop bushes
     for (CCNode *bush in _bushes) {
-        bush.position = ccp(bush.position.x - (character.physicsBody.velocity.x * delta), bush.position.y);
         
+        CGPoint bushWorldPosition = [_parallaxBackground convertToWorldSpace:bush.position];
         
-        if(bush.position.x <= (-1 * bush.contentSize.width))
+        CGPoint bushScreenPosition = [self convertToNodeSpace:bushWorldPosition];
+        
+        if(bushScreenPosition.x <= (-1 * bush.contentSize.width))
         {
-            bush.position = ccp(bush.position.x + 2 * bush.contentSize.width, bush.position.y);
+            for (CGPointObject *child in _parallaxBackground.parallaxArray) {
+                if(child.child == bush)
+                {
+                    child.offset = ccp(child.offset.x + 2 * bush.contentSize.width, child.offset.y);
+                }
+            }
         }
     }
    
